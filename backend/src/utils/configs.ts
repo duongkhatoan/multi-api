@@ -1,0 +1,62 @@
+const defaultConfigs = {
+  nodeEnv: "development",
+  appEnv: "development",
+  appName: "app_report_backend",
+  appVersion: "1.0.0",
+  port: 4000,
+  appNamespace: "app_report_backend",
+  redisHost: "localhost",
+  redisPort: 6379,
+  redisUsername: null,
+  redisPassword: null,
+  redisUrl: "redis://127.0.0.1:6379/0",
+  openWeatherApiKey: null,
+  newsApiKey: null,
+  coinGeckoApiKey: null,
+  coinGeckoApiUrl: "https://api.coingecko.com/api/v3",
+  newsApiUrl: "https://newsapi.org/v2",
+  openWeatherApiUrl: "https://api.openweathermap.org/data/2.5",
+};
+
+export function getConfigs() {
+  const {
+    APP_NAMESPACE = defaultConfigs.appNamespace,
+    NODE_ENV = defaultConfigs.nodeEnv,
+    APP_NAME = defaultConfigs.appName,
+    APP_ENV = defaultConfigs.appEnv,
+    PORT = defaultConfigs.port,
+    DATABASE_URL,
+    REDIS_HOST = defaultConfigs.redisHost,
+    REDIS_PORT = defaultConfigs.redisPort,
+    REDIS_USERNAME = defaultConfigs.redisUsername,
+    REDIS_PASSWORD = defaultConfigs.redisPassword,
+    REDIS_URL = defaultConfigs.redisUrl,
+    OPENWEATHER_API_KEY = defaultConfigs.openWeatherApiKey,
+    NEWS_API_KEY = defaultConfigs.newsApiKey,
+    COIN_GECKO_API_KEY = defaultConfigs.coinGeckoApiKey,
+    COIN_GECKO_API_URL = defaultConfigs.coinGeckoApiUrl,
+    NEWS_API_URL = defaultConfigs.newsApiUrl,
+    OPENWEATHER_API_URL = defaultConfigs.openWeatherApiUrl,
+  } = process.env || {};
+
+  const configs = {
+    appNamespace: APP_NAMESPACE,
+    nodeEnv: NODE_ENV,
+    appName: APP_NAME,
+    appEnv: APP_ENV,
+    port: PORT,
+    databaseUrl: DATABASE_URL,
+    redisHost: REDIS_HOST,
+    redisPort: REDIS_PORT,
+    redisUsername: REDIS_USERNAME,
+    redisPassword: REDIS_PASSWORD,
+    redisUrl: REDIS_URL,
+    openWeatherApiKey: OPENWEATHER_API_KEY,
+    newsApiKey: NEWS_API_KEY,
+    coinGeckoApiKey: COIN_GECKO_API_KEY,
+    coinGeckoApiUrl: COIN_GECKO_API_URL,
+    newsApiUrl: NEWS_API_URL,
+    openWeatherApiUrl: OPENWEATHER_API_URL,
+  };
+  return configs;
+}

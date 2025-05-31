@@ -1,0 +1,36 @@
+// Aggregated data models for multi-API integration
+model AggregatedData {
+    id        String      @id @default(auto()) @map("_id") @db.ObjectId
+    crypto    CryptoData?
+    weather   WeatherData?
+    news      NewsData?
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+
+    @@map("aggregatedData")
+}
+
+// Embedded types for MongoDB
+type CryptoData {
+    name      String
+    symbol    String
+    price     Float
+    marketCap Float
+}
+
+type WeatherData {
+    city        String
+    temperature Float
+    condition   String
+    humidity    Int?
+    windSpeed   Float?
+}
+
+type NewsData {
+    title       String
+    source      String
+    url         String
+    description String?
+    publishedAt DateTime
+    category    String?
+}
