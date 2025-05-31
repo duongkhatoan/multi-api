@@ -7,10 +7,12 @@ A Node.js + Express backend service that integrates and normalizes data from mul
 - **Multi-API Integration**: Fetches data from CoinGecko, OpenWeather, and NewsAPI
 - **Data Normalization**: Unified response format across different data sources
 - **Rate Limiting**: 5 requests per minute protection against abuse
-- **Database Storage**: MongoDB with Prisma ORM for data persistence
-- **Type Safety**: Full TypeScript implementation
+- **Database Storage**: MongoDB with Prisma ORM and modular schema structure
+- **DataLoaders**: Efficient data loading and caching mechanisms
+- **Type Safety**: Full TypeScript implementation with strict typing
 - **Error Handling**: Comprehensive error handling and logging
-- **Filtering Support**: Price range filtering for crypto data, city selection for weather, keyword search for news
+- **Filtering Support**: Advanced filtering with price range, city selection, and keyword search
+- **Data Persistence**: Automatic storage of aggregated data for analytics
 
 ## 🛠 Tech Stack
 
@@ -18,10 +20,12 @@ A Node.js + Express backend service that integrates and normalizes data from mul
 - **Framework**: Express.js
 - **Language**: TypeScript
 - **Database**: MongoDB
-- **ORM**: Prisma
+- **ORM**: Prisma (with schema folder structure)
 - **Rate Limiting**: express-rate-limit
 - **HTTP Client**: Axios
-- **Environment**: dotenvx
+- **Environment**: dotenvx (enhanced env management)
+- **Testing**: Jest with custom setup
+- **Development**: Nodemon with TypeScript
 
 ## 📋 Prerequisites
 
@@ -81,19 +85,33 @@ OPENWEATHER_API_URL="https://api.openweathermap.org/data/2.5"
 
 ```bash
 # Push database schema
+npm run db:push
+# or
 yarn run db:push
 
+# Optional: Seed database with initial data
+npm run db:seed
+# or
+yarn run db:seed
 ```
 
 ### 4. Development
 
 ```bash
 # Start development server with hot reload
+npm run dev
+# or
 yarn run dev
 
 # Build for production
+npm run build
+# or
 yarn run build
 
+# Start production server
+npm start
+# or
+yarn start
 ```
 
 ## 📚 API Documentation
@@ -114,17 +132,17 @@ GET /api/aggregated-data
 
 **Query Parameters:**
 
-- `crypto` (string): Cryptocurrency ID (default: "bitcoin")
-- `city` (string): City name for weather (default: "Hanoi")
-- `newsQuery` (string): News search keyword (default: "technology")
-- `minPrice` (number): Minimum crypto price filter
-- `maxPrice` (number): Maximum crypto price filter
-- `cryptoLimit` (number): Number of cryptocurrencies to fetch
+- `filters[crypto]` (string): Cryptocurrency ID (default: "bitcoin")
+- `filters[city]` (string): City name for weather (default: "Hanoi")
+- `filters[newsQuery]` (string): News search keyword (default: "technology")
+- `filters[minPrice]` (number): Minimum crypto price filter
+- `filters[maxPrice]` (number): Maximum crypto price filter
+- `filters[cryptoLimit]` (number): Number of cryptocurrencies to fetch
 
 **Example Request:**
 
 ```bash
-curl "http://localhost:4000/api/aggregated-data?crypto=ethereum&city=Tokyo&newsQuery=blockchain&minPrice=1000&maxPrice=5000"
+curl "http://localhost:4000/api/aggregated-data?filters[crypto]=ethereum&filters[city]=Tokyo&filters[newsQuery]=blockchain&filters[minPrice]=1000&filters[maxPrice]=5000"
 ```
 
 **Example Response:**
@@ -172,14 +190,52 @@ Returns service status and timestamp.
 ```
 src/
 ├── api/
-│   ├── controllers/     # Request handlers
-│   └── routes/         # Route definitions
-├── services/           # Business logic and external API integration
-├── database/           # Database connection and seeding
-├── utils/             # Utilities and middleware
-├── types/             # TypeScript type definitions
-└── index.ts           # Application entry point
+│   ├── controllers/        # Request handlers and business logic
+│   └── routes/            # API route definitions
+├── services/              # External API integration (CoinGecko, Weather, News)
+├── database/              # Database connection, Prisma setup, and seeding
+├── dataloaders/           # DataLoader implementations for efficient queries
+├── helpers/               # Helper functions and model utilities
+├── utils/                 # Utilities, middleware, and configurations
+├── types/                 # TypeScript type definitions
+├── validators/            # Input validation schemas
+└── index.ts               # Application entry point
+
+prisma/
+├── schema.prisma          # Main Prisma configuration
+└── aggregated_data.prisma # Aggregated data models for MongoDB
+
+jest/
+└── setup.ts              # Jest test configuration
 ```
+
+## 🗃️ Database Models
+
+### AggregatedData Model
+Stores all aggregated API responses for analytics and caching:
+
+```typescript
+model AggregatedData {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  crypto    CryptoData?
+  weather   WeatherData?
+  news      NewsData?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+```
+
+### Embedded Types
+- **CryptoData**: name, symbol, price, marketCap
+- **WeatherData**: city, temperature, condition, humidity, windSpeed
+- **NewsData**: title, source, url, description, publishedAt, category
+
+## ⚡ DataLoaders
+
+The application implements DataLoaders for optimized database operations:
+- Batched database queries
+- Automatic caching and deduplication
+- Reduced database load through intelligent query optimization
 
 ## 🛡️ Rate Limiting
 

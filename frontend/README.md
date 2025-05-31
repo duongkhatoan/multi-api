@@ -1,17 +1,18 @@
 # Multi-API Integration Dashboard
 
-A modern React dashboard that displays aggregated data from multiple APIs including cryptocurrency prices, weather information, and latest news. Built with Next.js, TypeScript, and Tailwind CSS.
+A modern React dashboard that displays aggregated data from multiple APIs including cryptocurrency prices, weather information, and latest news. Built with Next.js 15, TypeScript, and Tailwind CSS with advanced filtering and state management.
 
 ## 🚀 Features
 
-- **Real-time Data Dashboard**: Live cryptocurrency, weather, and news data
+- **Real-time Data Dashboard**: Live cryptocurrency, weather, and news data with auto-refresh
 - **Advanced Filtering**: Filter crypto by price range, select cities for weather, search news by keywords
-- **Responsive Design**: Mobile-first design with card-based layout
+- **URL State Management**: All filters synchronized with URL parameters for shareable links
+- **Responsive Design**: Mobile-first design with modern card-based layout
 - **Modern UI/UX**: Built with Radix UI components and Tailwind CSS
-- **Type Safety**: Full TypeScript implementation
-- **State Management**: URL-based state with SWR for data fetching
-- **Error Handling**: Comprehensive error states and loading indicators
-- **Performance**: Optimized with Next.js App Router and automatic code splitting
+- **Type Safety**: Full TypeScript implementation with strict typing
+- **Error Handling**: Comprehensive error states, loading indicators, and empty states
+- **Performance**: Optimized with Next.js App Router, SWR caching, and automatic code splitting
+- **Form Validation**: React Hook Form with Zod validation for robust user input
 
 ## 🛠 Tech Stack
 
@@ -112,18 +113,40 @@ The application will be available at `http://localhost:3000`
 ```
 src/
 ├── app/                    # Next.js App Router
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx          # Home page
+│   ├── globals.css        # Global styles and Tailwind imports
+│   ├── layout.tsx         # Root layout with providers
+│   └── page.tsx          # Home page with Dashboard component
 ├── components/
-│   ├── ui/               # Base UI components (button, card, input, etc.)
-│   ├── common/           # Shared components (ErrorComponent, EmptyState)
+│   ├── ui/               # Base UI components (Radix UI + Tailwind)
+│   │   ├── button.tsx    # Button variants with class-variance-authority
+│   │   ├── card.tsx      # Card container components
+│   │   ├── input.tsx     # Form input with validation states
+│   │   ├── select.tsx    # Dropdown select with Radix UI
+│   │   └── skeleton.tsx  # Loading skeleton animations
+│   ├── common/           # Shared components across features
+│   │   ├── ErrorComponent.tsx  # Error state with retry functionality
+│   │   ├── EmptyState.tsx     # Empty state with call-to-action
+│   │   └── LoadingError.tsx   # Loading and error state management
 │   └── features/
 │       └── dashboard/    # Dashboard-specific components
-├── lib/                  # Utility libraries
-├── services/             # API service layers
+│           ├── Dashboard.tsx        # Main container with URL state
+│           ├── FilterPanel.tsx      # Advanced filtering with validation
+│           ├── CryptoCard.tsx      # Cryptocurrency data display
+│           ├── WeatherCard.tsx     # Weather information display
+│           ├── NewsCard.tsx        # News articles display
+│           └── DashboardSkeleton.tsx # Loading state for dashboard
+├── lib/                  # Core utilities and configurations
+│   ├── axios.ts         # Axios instance with base configuration
+│   ├── swr.tsx          # SWR configuration and error handling
+│   └── utils.ts         # Utility functions (cn, formatters)
+├── services/            # API service layers
+│   └── aggregatedData.ts # API service for aggregated data
+├── config/              # Application configuration
+│   └── constants.ts     # App constants and settings
 ├── types/               # TypeScript type definitions
+│   └── index.ts         # Shared types and interfaces
 └── utils/               # Helper utilities
+    └── url.ts           # URL manipulation and query param handling
 ```
 
 ### Component Architecture
@@ -187,10 +210,43 @@ The project uses Tailwind CSS with custom configuration for:
 
 ## 📝 Available Scripts
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build for production
+- `npm run dev` - Start development server with Turbopack for faster builds
+- `npm run build` - Build optimized production bundle
 - `npm start` - Start production server
-- `npm run lint` - Run ESLint
+- `npm run lint` - Run ESLint for code quality
+
+## 🔄 State Management
+
+### URL-Based State
+All filter parameters are synchronized with URL query parameters:
+- Shareable URLs with current filter state
+- Browser back/forward navigation support
+- Deep linking to specific dashboard configurations
+
+### SWR Data Management
+- Automatic background revalidation
+- Optimistic updates for better UX
+- Error boundaries with retry mechanisms
+- Memory-efficient caching strategy
+
+## 🎯 Key Features Detail
+
+### Advanced Filtering System
+```typescript
+interface FilterOptions {
+  crypto: string;           // Cryptocurrency selection
+  city: string;            // City for weather data
+  newsQuery: string;       // News search keywords
+  minPrice?: number;       // Minimum crypto price filter
+  maxPrice?: number;       // Maximum crypto price filter
+}
+```
+
+### Error Handling Strategy
+- Network error recovery with automatic retry
+- User-friendly error messages
+- Fallback UI components for failed states
+- Loading states for all data fetching operations
 
 ## 🔍 Usage Examples
 
